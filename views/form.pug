@@ -7,8 +7,8 @@ html
         if error
             p(style="color: red;")= error
         form(action="/submit", method="post")
-            label(for="task") Task:
+            label(for="task") User:
             input(type="text", name="task", required=true)
-            button(type="submit") Add Task
-        a(href="/base") Back to To-Do List
+            button(type="submit") Add
+        a(href="/base") Back to Users List
     

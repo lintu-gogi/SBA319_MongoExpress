@@ -5,12 +5,6 @@ import mongoose from "mongoose";
 
 
 import bodyParser from "express";
-
-//const methodOverride = require('method-override');
-//import methodOverride from "method-override";
-//path for pug
-
-//const path = require('path');
 import path from "path";
 // These are now route imports, not database imports!
 //const users = require("./routes/users");
@@ -96,7 +90,7 @@ app.post("/submit", async(req,res)=>{
     //console.log(newuser);
     //newuser.save();
     res.redirect('/base');
-  } else res.status(400).render('form', { title: 'Add Task', error: 'Task is required' });
+  } else res.status(400).render('form', { title: 'Add User', error: 'Task is required' });
 })
 app.get("/getUsers/:name",async(req,res)=>{
     const userbyname= await UserModel.find({name:req.params.name})
@@ -112,7 +106,7 @@ app.post("/deleteItem/:id",async(req,res)=>{
 })
 app.get("/updateview",async(req,res)=>{
   const ur=await UserModel.find();
-  res.render('updateview',{title:'Update ToDo List Page',ur});
+  res.render('updateview',{title:'Update User Page',ur});
 
 })
 app.post("/updateItem/:id",async(req,res)=>{ 
@@ -123,6 +117,22 @@ app.post("/updateItem/:id",async(req,res)=>{
   console.log(uItemFromForm);
   const updatedItem= await UserModel.findByIdAndUpdate(taskid,{"name": uItemFromForm});
   console.log(updatedItem); 
+  res.redirect("/base");
+})
+app.get("/addtodo", async(req,res)=>{
+  const ur=await UserModel.find();
+  //console.log(ur);
+  res.render('addtodo',{title:'ToDo List Page',ur});
+})
+app.post("/todoItem/:id",async(req,res)=>{ 
+
+  const userid=req.params.id;
+  console.log(userid);
+  const todoitem=req.body.todouser;
+  console.log(todoitem);
+  const comments=req.body.comment;
+  console.log(comments);
+  res.redirect("/base");
 })
 /*app.post("/updateItem/:id",async(req,res)=>{ 
 
