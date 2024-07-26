@@ -1,0 +1,17 @@
+doctype html 
+html 
+    head 
+        title #{title}
+    body
+        h1 List Of Users
+        if error
+            p(style="color: red;")= error
+        ul
+            each todo, index in ur
+                form(method="POST",action=`/deleteItem/${todo._id}`)
+                    li  #{todo.name}
+                    button(type="submit") Delete
+                br
+        a(href="/form") Add a new User
+        br
+        a(href="/updateview") Update Users

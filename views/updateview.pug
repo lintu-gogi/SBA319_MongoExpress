@@ -1,0 +1,18 @@
+doctype html 
+html 
+    head 
+        title #{title}
+    body
+        h1 Update Users
+        if error
+            p(style="color: red;")= error
+        ul
+            each todo, index in ur
+                form(method="POST",action=`/updateItem/${todo._id}`)
+                    li  #{todo.name}
+                    label(for="upname") Enter Updated Item:
+                    input(type="text", name="upname", required=true)
+                    button(type="submit") Update
+                    br
+        a(href="/base") Back to Todo List
+        

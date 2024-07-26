@@ -1,0 +1,14 @@
+doctype html 
+html 
+    head 
+        title #{title}
+    body
+        h1 Add Users To List
+        if error
+            p(style="color: red;")= error
+        form(action="/submit", method="post")
+            label(for="task") Task:
+            input(type="text", name="task", required=true)
+            button(type="submit") Add Task
+        a(href="/base") Back to To-Do List
+    
