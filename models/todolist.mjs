@@ -4,12 +4,11 @@ const userSchema = new mongoose.Schema({
     // the valid data types for that field, and a
     // required field to specify whether it is required.
     userid: {
-      type: Number,
-      required: true,
+      type: String
+    
     },
     list: {
-      type: String,
-      required: true,
+      type: String
     }
 })
 // Compile the schema into a model and export it.

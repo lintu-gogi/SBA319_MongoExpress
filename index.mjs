@@ -12,6 +12,8 @@ import users from "./routes/users.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import UserModel from "./models/userdata.mjs";
+import TodoListModel from "./models/todolist.mjs";
+import CommentsModel from "./models/comments.mjs"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -102,6 +104,12 @@ app.post("/deleteItem/:id",async(req,res)=>{
     console.log(taskid);
     const deletedItem= await UserModel.findByIdAndDelete(taskid);
     console.log(deletedItem);
+    TodoListModel.deleteMany({ userid: { $in: taskid } })
+    .then(console.log("items deleted from Todo List"))
+    .catch(err => console.log(err));
+    CommentsModel.deleteMany({ userid: { $in: taskid } })
+    .then(console.log("items deleted from Comments List"))
+    .catch(err => console.log(err));
     res.redirect('/base');
 })
 app.get("/updateview",async(req,res)=>{
@@ -126,12 +134,28 @@ app.get("/addtodo", async(req,res)=>{
 })
 app.post("/todoItem/:id",async(req,res)=>{ 
 
-  const userid=req.params.id;
-  console.log(userid);
+  const usid=req.params.id;
+  console.log(usid);
   const todoitem=req.body.todouser;
   console.log(todoitem);
+  const newItem = new TodoListModel({
+    userid: usid,
+    list: todoitem
+  });
+  newItem.save()
+    .then(console.log(`Item created:`))
+    .catch(err => console.log(err));
+  //const newtodo= await TodoListModel.create({userid:usid},{list:todoitem});
   const comments=req.body.comment;
   console.log(comments);
+  const newItemcom = new CommentsModel({
+    userid: usid,
+    comment: comments
+  });
+  newItemcom.save()
+    .then(console.log(`Item created:`))
+    .catch(err => console.log(err));
+  //const newcomment= await CommentsModel.create({userid:usid},{comment:comments});
   res.redirect("/base");
 })
 /*app.post("/updateItem/:id",async(req,res)=>{ 
