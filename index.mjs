@@ -6,9 +6,7 @@ import mongoose from "mongoose";
 
 import bodyParser from "express";
 import path from "path";
-// These are now route imports, not database imports!
-//const users = require("./routes/users");
-import users from "./routes/users.js";
+
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import UserModel from "./models/userdata.mjs";
@@ -36,8 +34,6 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
 
-// Middleware to override method
-//app.use(methodOverride('_method'));
 // Set Pug as the template engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -60,9 +56,7 @@ ${time.toLocaleTimeString()}: Received a ${req.method} request to ${req.url}.`
 
 
 
-// Use our Routes
-app.use("/new",users);
-
+//Tried another way of creating new records
 //const UserModel=mongoose.model("userslists",userSchema);
 //const newuser= await UserModel.create({name:"Mina",phone_no:1236789});
 //newuser.save();
@@ -75,7 +69,7 @@ app.get("/getUsers", async(req,res)=>{
 app.get("/base", async(req,res)=>{
     const ur=await UserModel.find();
     //console.log(ur);
-  res.render('indexview',{title:'ToDo List Page',ur});
+  res.render('indexview',{title:'List of Users Page',ur});
 })
 app.get("/form", async(req,res)=>{
   const ur=await UserModel.find();
@@ -84,13 +78,17 @@ app.get("/form", async(req,res)=>{
 })
 app.post("/submit", async(req,res)=>{
   if (req.body.task) {
-    /*if (usertodo.find((u) => u.list == req.body.task)) {
-      res.json({ error: "List Already Added" });
-      return;
-    }*/
+    try{
     const newuser= await UserModel.create({name:req.body.task});
     //console.log(newuser);
-    //newuser.save();
+    await newuser.save();
+    }catch(error){
+      if(error.code=== 11000) {
+        console.error('Duplicate key error: Name must be unique');
+      } else {
+        console.error('Error creating user:', error);
+      }
+    }
     res.redirect('/base');
   } else res.status(400).render('form', { title: 'Add User', error: 'Task is required' });
 })
@@ -145,7 +143,6 @@ app.post("/todoItem/:id",async(req,res)=>{
   newItem.save()
     .then(console.log(`Item created:`))
     .catch(err => console.log(err));
-  //const newtodo= await TodoListModel.create({userid:usid},{list:todoitem});
   const comments=req.body.comment;
   console.log(comments);
   const newItemcom = new CommentsModel({
@@ -155,16 +152,8 @@ app.post("/todoItem/:id",async(req,res)=>{
   newItemcom.save()
     .then(console.log(`Item created:`))
     .catch(err => console.log(err));
-  //const newcomment= await CommentsModel.create({userid:usid},{comment:comments});
   res.redirect("/base");
 })
-/*app.post("/updateItem/:id",async(req,res)=>{ 
-
-  const taskid=req.params.id;
-  console.log(taskid);
-  const updatedItem= await UserModel.findByIdAndUpdate(taskid,{"name": "Great Dane"});
-  console.log(updatedItem); 
-})*/
   // Global error handling
   app.use((err, _req, res, next) => {
     res.status(500).send("Seems like we messed up somewhere...");
